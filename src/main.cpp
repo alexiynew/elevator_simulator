@@ -1,3 +1,5 @@
+#include "commands.hpp"
+#include "interface.hpp"
 #include "settings.hpp"
 #include <iostream>
 
@@ -15,6 +17,13 @@ std::ostream& operator<<(std::ostream& os, const settings setup)
 int main(int argc, char* argv[])
 {
     settings setup(argc, argv);
+    interface ui;
+
+    ui.add_command_handler(std::function<void(command::help)>{ [](command::help command) {
+        std::cout << "help" << std::endl;
+    } });
+
+    ui.run();
 
     std::cout << "hello" << std::endl;
     std::cout << setup << std::endl;
