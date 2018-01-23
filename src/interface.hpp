@@ -9,7 +9,7 @@ class interface {
 public:
     void show_message(const std::string& message);
 
-    void run();
+    void process_input();
 
     template <typename T>
     void add_command_handler(std::function<void(T)> handler)
