@@ -19,9 +19,9 @@ int main(int argc, char* argv[])
     settings setup(argc, argv);
     interface ui;
 
-    ui.add_command_handler(std::function<void(command::help)>{ [](command::help command) {
+    ui.add_command_handler<command::help>([](command::help command) {
         std::cout << "help" << std::endl;
-    } });
+    });
 
     ui.run();
 
