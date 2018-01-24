@@ -3,31 +3,55 @@
 
 #include "settings.hpp"
 #include <functional>
+#include <mutex>
 #include <queue>
 #include <string>
+#include <thread>
 
 class elevator {
 public:
-	using message_handler = std::function<void(const std::string&)>;
-	elevator(const settings& setup);
-	~elevator();
+    using message_handler = std::function<void(const std::string&)>;
+    elevator(const settings& setup);
+    ~elevator();
 
-	void run();
+    void run();
+    void stop();
 
-	void move_to(int floor);
-	void call_to(int floor);
+    void move_to(int floor);
+    void call_to(int floor);
 
-	void set_message_handler(message_handler handler);
+    void set_message_handler(message_handler handler);
 
 private:
-	settings m_setup;
+    enum class state {
+        waiting,
+        moving,
+        opening_doors,
+        waiting_doors,
+        closing_doors,
+    };
 
-	message_handler m_message_handler;
+    settings m_setup;
 
-	int m_current_floor = 1;
-	int m_target_floor = 1;
+    message_handler m_message_handler;
 
-	void send_message(const std::string& message);
+    state m_state = state::waiting;
+    bool m_working = false;
+    int m_current_floor = 1;
+    int m_target_floor = 1;
+
+    std::mutex m_mutex;
+    std::queue<int> m_requested_floors;
+    std::thread m_thread;
+
+    void process_requests();
+
+    void send_message(const std::string& message) const;
+
+    void add_to_queue(int floor);
+    bool is_available_floor(int floor) const;
+
+    int get_next_floor();
 };
 
 #endif

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
 project(elevator_simulator VERSION 0.0.1)
 
-set(CMAKE_CXX_FLAGS "-Wall -std=c++14") 
+set(CMAKE_CXX_FLAGS "-Wall -std=c++14 -pthread") 
 set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 file(GLOB_RECURSE SOURCES ${SOURCE_DIR}/*.cpp)
