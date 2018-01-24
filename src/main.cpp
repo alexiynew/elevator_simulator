@@ -1,25 +1,16 @@
 #include "commands.hpp"
 #include "interface.hpp"
 #include "settings.hpp"
+#include "elevator.hpp"
 #include <iostream>
-
-std::ostream& operator<<(std::ostream& os, const settings setup)
-{
-    os << "Setup:\n"
-       << "\t floors count    [" << setup.floors_count() << "]\n"
-       << "\t floor height    [" << setup.floors_count() << "m]\n"
-       << "\t speed           [" << setup.speed() << "m/s]\n"
-       << "\t doors open time [" << setup.open_time() << "s]\n";
-
-    return os;
-}
 
 int main(int argc, char* argv[])
 {
     settings setup(argc, argv);
-    interface ui;
-
     bool enabled = true;
+
+
+    interface ui;
 
     ui.add_command_handler<command::call>([](command::call command) {
         std::cout << "call to " << command.floor << std::endl;
@@ -38,7 +29,17 @@ int main(int argc, char* argv[])
         ui.show_message("help");
     });
 
+
+    elevator lift(setup);
+
+    lift.set_message_handler([&ui](const std::string& message){
+        ui.show_message(message);
+    });
+
+
     ui.show_message("=== Welcome to elevator sim 2018 ===");
+
+    lift.run();
     while (enabled) {
         ui.process_input();
     }
