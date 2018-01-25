@@ -4,9 +4,9 @@
 #include "settings.hpp"
 #include <functional>
 #include <mutex>
-#include <queue>
 #include <string>
 #include <thread>
+#include <vector>
 
 class elevator {
 public:
@@ -31,24 +31,31 @@ private:
         closing_doors,
     };
 
-    settings m_setup;
+    enum class direction {
+        up,
+        down,
+        none
+    };
+
+    const settings m_setup;
 
     message_handler m_message_handler;
 
     state m_state = state::waiting;
+    direction m_direction = direction::none;
     bool m_working = false;
     int m_current_floor = 1;
     int m_target_floor = 1;
 
     std::mutex m_mutex;
-    std::queue<int> m_requested_floors;
+    std::vector<bool> m_requested_floors;
     std::thread m_thread;
 
     void process_requests();
 
     void send_message(const std::string& message) const;
 
-    void add_to_queue(int floor);
+    void add_request(int floor);
     bool is_available_floor(int floor) const;
 
     int get_next_floor();

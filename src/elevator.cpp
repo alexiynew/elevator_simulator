@@ -16,6 +16,7 @@ std::string to_string(int value)
 
 elevator::elevator(const settings& setup)
     : m_setup(setup)
+    , m_requested_floors(setup.floors_count(), false)
 {
 }
 
@@ -38,19 +39,20 @@ void elevator::run()
 void elevator::stop()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
+    std::fill(m_requested_floors.begin(), m_requested_floors.end(), false);
     m_working = false;
 }
 
 void elevator::move_to(int floor)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    add_to_queue(floor);
+    add_request(floor);
 }
 
 void elevator::call_to(int floor)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    add_to_queue(floor);
+    add_request(floor);
 }
 
 void elevator::set_message_handler(message_handler handler)
@@ -114,10 +116,10 @@ void elevator::send_message(const std::string& message) const
     }
 }
 
-void elevator::add_to_queue(int floor)
+void elevator::add_request(int floor)
 {
     if (is_available_floor(floor)) {
-        m_requested_floors.push(floor);
+        m_requested_floors[floor - 1] = true;
     } else {
         send_message("selected floor is unavailable");
     }
@@ -130,12 +132,39 @@ bool elevator::is_available_floor(int floor) const
 
 int elevator::get_next_floor()
 {
+    auto next_upper_floor = [this]() {
+        for (int i = m_current_floor - 1; i < m_requested_floors.size(); ++i) {
+            if (m_requested_floors[i]) {
+                return i + 1;
+            }
+        }
+    };
+
+    auto next_lower_floor = [this]() {
+        for (int i = m_current_floor - 1; i >= 0; --i) {
+            if (m_requested_floors[i]) {
+                return i + 1;
+            }
+        }
+    };
+
     std::lock_guard<std::mutex> lock(m_mutex);
-    if (!m_requested_floors.empty()) {
-        int floor = m_requested_floors.front();
-        m_requested_floors.pop();
-        return floor;
+
+    int floor = 0;
+    switch (m_direction) {
+    case direction::up:
+        floor = next_upper_floor();
+        break;
+    case direction::down:
+        floor = next_lower_floor();
+        break;
+    case direction::none:
+        floor = next_upper_floor();
+        if (!floor) {
+            floor = next_lower_floor();
+        }
+        break;
     }
 
-    return 0;
+    return floor;
 }
