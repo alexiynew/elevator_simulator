@@ -53,9 +53,10 @@ private:
 
     void process_requests();
 
-    void send_message(const std::string& message) const;
+    void send_message(const std::string& message);
 
     void add_request(int floor);
+    void complete_request(int floor);
     bool is_available_floor(int floor) const;
 
     int get_next_floor();
