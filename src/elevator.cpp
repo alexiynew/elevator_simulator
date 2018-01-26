@@ -1,18 +1,9 @@
 #include "elevator.hpp"
+#include "utils.hpp"
 #include <cassert>
 #include <chrono>
-#include <sstream>
 
 using namespace std::chrono_literals;
-
-namespace {
-std::string to_string(int value)
-{
-    std::stringstream temp;
-    temp << value;
-    return temp.str();
-}
-}
 
 elevator::elevator(const settings& setup)
     : m_setup(setup)
@@ -97,7 +88,7 @@ void elevator::process_requests()
             } else {
                 m_current_floor = m_current_floor > m_target_floor ? m_current_floor - 1 : m_current_floor + 1;
                 assert(is_available_floor(m_current_floor));
-                send_message(std::string("floor ") + to_string(m_current_floor));
+                send_message(std::string("floor ") + utils::to_string(m_current_floor));
             }
             break;
         }

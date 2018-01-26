@@ -11,10 +11,15 @@ public:
     int open_time() const { return m_open_time; }
 
 private:
-    int m_floors_count = 5;
-    float m_floor_height = 2.5f; // meters
-    float m_speed = 1.0f; // meters per second
-    int m_open_time = 5; // seconds
+	static constexpr int default_floors_count = 5;
+	static constexpr float default_floor_height = 2.5f; // meters
+	static constexpr float default_speed = 1.0f; // meters per second
+	static constexpr int default_open_time = 5; // seconds
+
+    int m_floors_count = default_floors_count;
+    float m_floor_height = default_floor_height;
+    float m_speed = default_speed; 
+    int m_open_time = default_open_time; 
 };
 
 #endif

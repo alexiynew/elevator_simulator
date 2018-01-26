@@ -1,18 +1,10 @@
 #include "interface.hpp"
 #include "commands.hpp"
+#include "utils.hpp"
 #include <iostream>
-#include <sstream>
 #include <vector>
 
 namespace {
-int to_int(const std::string& string)
-{
-    std::stringstream temp(string);
-    int value = 0;
-    temp >> value;
-    return value;
-}
-
 std::vector<std::string> split(const std::string& string, char delim)
 {
     std::vector<std::string> elements;
@@ -48,13 +40,13 @@ void interface::process_input()
 
     if (command == "move" || command == "m") {
         if (!argument.empty()) {
-            m_dispatcher.send_command(command::move{ to_int(argument) });
+            m_dispatcher.send_command(command::move{ utils::value_or<int>(argument, 0) });
         } else {
             show_message("argument required");
         }
     } else if (command == "call" || command == "c") {
         if (!argument.empty()) {
-            m_dispatcher.send_command(command::call{ to_int(argument) });
+            m_dispatcher.send_command(command::call{ utils::value_or<int>(argument, 0) });
         } else {
             show_message("argument required");
         }
