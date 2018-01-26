@@ -1,12 +1,16 @@
 #ifndef INTREFACE_HPP
 #define INTREFACE_HPP
 
+#include "command_dispatcher.hpp"
 #include <functional>
 #include <string>
-#include "command_dispatcher.hpp"
+#include <vector>
 
 class interface {
 public:
+    interface();
+    ~interface();
+
     void show_message(const std::string& message);
 
     void process_input();
@@ -18,7 +22,12 @@ public:
     }
 
 private:
+    class command_parser;
+
+    std::vector<command_parser> m_parsers;
     command::dispatcher m_dispatcher;
+
+    void init_parsers();
 };
 
 #endif

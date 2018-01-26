@@ -14,6 +14,9 @@ struct call {
 struct help {
 };
 
+struct setup {
+};
+
 struct exit {
 };
 }
