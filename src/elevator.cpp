@@ -125,14 +125,14 @@ void elevator::update()
             m_moving_start_time = std::chrono::high_resolution_clock::now();
             m_current_floor = m_current_floor > m_target_floor ? m_current_floor - 1 : m_current_floor + 1;
             assert(is_available_floor(m_current_floor));
-            send_message(std::string("floor ") + utils::to_string(m_current_floor));
+            send_message(std::string("Floor ") + utils::to_string(m_current_floor));
         }
         break;
     }
     case state::opening_doors: {
         m_doors_open_time = std::chrono::high_resolution_clock::now();
         assert(m_current_floor == m_target_floor);
-        send_message("open doors");
+        send_message("Open doors");
         m_state = state::waiting_doors;
         break;
     }
@@ -149,7 +149,7 @@ void elevator::update()
     case state::closing_doors: {
         assert(m_current_floor == m_target_floor);
 
-        send_message("close doors");
+        send_message("Close doors");
         complete_request(m_current_floor);
 
         if (select_next_floor()) {
@@ -179,7 +179,7 @@ void elevator::add_request(int floor)
     if (is_available_floor(floor)) {
         m_requested_floors[floor - 1] = true;
     } else {
-        send_message("selected floor is unavailable");
+        send_message("Selected floor is unavailable");
     }
 }
 

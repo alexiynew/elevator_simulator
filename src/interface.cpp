@@ -76,7 +76,7 @@ void interface::process_input()
         }
     }
 
-    show_message("unknown command");
+    show_message("Unknown command");
 }
 
 void interface::init_parsers()
@@ -85,7 +85,7 @@ void interface::init_parsers()
         if (!argument.empty()) {
             m_dispatcher.send_command(command::move{ utils::value_or<int>(argument, 0) });
         } else {
-            show_message("argument required");
+            show_message("Argument required");
         }
     };
 
@@ -93,7 +93,7 @@ void interface::init_parsers()
         if (!argument.empty()) {
             m_dispatcher.send_command(command::call{ utils::value_or<int>(argument, 0) });
         } else {
-            show_message("argument required");
+            show_message("Argument required");
         }
     };
 
